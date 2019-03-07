@@ -1,0 +1,16 @@
+ESTIMATE of time of completion: 10 hours
+
+        Time     Time
+  Date  Started  Spent  Work Completed
+  ----  -------  ----   --------------
+  3/7   12:15    0:45   Read and comprehended problem, began to sketch ideas in maze.hpp
+  3/7   16:40    1:00   Began reading maze string input and placing into my created classes
+  3/7   19:30    2:30   Created starting states for maze and finalizing data types in my classes
+  3/7   22:00    3:30   Implemented the BFS portion of the shortest path, methods were created for each movement type and control structures were put in place
+  3/8   01:30    1:30   Wrote method for proper output then dubegged against public tests, forgot to check potentially queued states to see if they have been seen already so I changed my addQueue method as well as my allStates datatype
+                 ----
+                 9:15 TOTAL time spent
+
+  I discussed my solution with: Sam Laing
+
+  Once again I fell victim to the rush job, luckily I had my own self imposed deadline as my mom is visting me the day it is due so I had to finish a day early. Although more tedious at times, I felt that this pset was easier than the last. Using STL made it so I could be a little more careless, knowing I won't have any memory issues. I do believe it is not the most effiecient version it could be, I did not go through every data structure because of my lack of time, but it works. It has also been some time since I have taken 223 so I'm not as sharp as I'd to be.
