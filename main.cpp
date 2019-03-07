@@ -39,10 +39,10 @@ int main(int argc, char **argv)
 	}
 
       auto m = Maze{input};
-      auto path = m.shortestPath();
-      std::for_each(path.begin(),
-		    path.end(),
-		    [](auto &p) { std::cout << p << std::endl; });
+//      auto path = m.shortestPath();
+//      std::for_each(path.begin(),
+//		    path.end(),
+//		    [](auto &p) { std::cout << p << std::endl; });
     }
   catch (const std::exception& ex)
     {

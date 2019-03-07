@@ -4,6 +4,8 @@
 #include <queue>
 #include <vector>
 #include <utility>
+#include <string>
+
 
 namespace cs427_527
 {
@@ -11,9 +13,19 @@ namespace cs427_527
     {
 	public:
 	    // Constructor for Maze class	   
-	    Maze(std::vector<string>);
+	    Maze(std::vector<std::string>);
 	    // returns deque of strings that is the shortest path 
 	    std::deque<std::string> shortestPath();
+	    
+	    struct tile
+	    {
+		tile(int x, int y, char r);     
+		// Data
+		// pair of ints, coordinates of tile
+		std::pair<int, int> xy;
+		// rule of the tile
+		char rule;
+	    };
 
 	    struct state
 	    {
@@ -29,14 +41,11 @@ namespace cs427_527
 	        enum direction{N = 0, W = 1, S = 2, E = 3};
 	    };
 
-	    struct tile
-	    {
-		// Data
-		// pair of ints, coordinates of tile
-		std::pair<int, int> xy;
-		// rule of the tile
-	        enum rule{S = 0, R = 1, U = 2, L = 3, ? = 4, X = 5, * = 6}
-	    };
+	    // Helper funtions
+	    // Fill grid from input
+	    void fillGrid(std::vector<std::string>);
+
+	    void toString();	  
 
 	private:
 	    // Queue holding possible paths
@@ -44,10 +53,10 @@ namespace cs427_527
 	    // Vector of grid
 	    std::vector<tile> grid;
 	    // Row Dimension
-	    int row;
+	    int rows;
 	    // Column Dimension
-	    int col;
+	    int cols;
     };
 }
-
+//#include "maze.cpp"
 #endif
