@@ -5,12 +5,13 @@
 #include <utility>
 #include <iostream>
 #include <algorithm>
+#include <sstream>
 
-//using Maze::tile;
 using std::string;
 using std::vector;
 using std::make_pair;
 using std::pair;
+using std::to_string;
 
 
 namespace cs427_527
@@ -22,7 +23,6 @@ namespace cs427_527
 	count = 0;
 	
 	fillGrid(input);
-	//toString();
     }
 
     Maze::tile::tile(){}
@@ -45,11 +45,12 @@ namespace cs427_527
     vector<string> Maze::shortestPath()
     {
 	startStates();
-	findPaths();
-
-	vector<string> temp;
-	temp.push_back("temp output");
-	return temp;
+	if(findPaths())
+	{
+	    return pathString();
+	}
+	
+	return vector<string>();
     }
 
     bool Maze::findPaths()
@@ -129,12 +130,30 @@ namespace cs427_527
 	grid = g;
     }
 
+    bool Maze::state::operator==(const state& rhs) const
+    {
+	return (space == rhs.space && direction == rhs.direction);
+    }
+
     void Maze::addToQueue(Maze::state newState)
     {
-	newState.parents.push_back(count);
-	allPoints.push_back(newState.space);
-	count++;
-	paths.push(newState);	
+	bool check = false;
+	for(auto it = allPoints.begin(); it != allPoints.end(); it++)
+	{
+	    if(newState == *it)
+	    {
+		check = true;
+		break;
+	    }
+	}
+	
+	if(!check)
+	{
+	    newState.parents.push_back(count);
+	    allPoints.push_back(newState);
+	    count++;
+	    paths.push(newState);
+	}
     }
 
     void Maze::startStates()
@@ -254,23 +273,17 @@ namespace cs427_527
 	return newState;
     }
 
-    void Maze::toString()
+    vector<string> Maze::pathString()
     {
-	std::cout << "here" << std::endl;
-	for(int i=0; i < rows*cols; i++)
+	vector<int> answer = paths.front().parents;
+	vector<string> returnString;
+	string format;
+	
+	for(auto it = answer.begin(); it != answer.end(); it++)
 	{
-	    if(i != 0 && i % cols ==0) std::cout << std::endl;
-	    std::cout << grid[i].rule << " ";
-	    
+	    format = string("(") +  to_string(allPoints[*it].space.first) + string(", ") + to_string(allPoints[*it].space.second) + string(")");
+	    returnString.push_back(format);
 	}
-	std::cout << std::endl;
-	for(int i=0; i < rows*cols; i++)
-	{
-	    if(i != 0 && i % cols ==0) std::cout << std::endl;
-	    std::cout << grid[i].xy.first << "," << grid[i].xy.second << " ";
-	    
-	}
-	std::cout << std::endl;
+	return returnString;
     }
-
 }

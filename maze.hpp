@@ -30,7 +30,7 @@ namespace cs427_527
 		char rule;
 	    };
 
-	    enum Direction{N = 0, W = 1, S = 2, E = 3};
+	    enum Direction{N, W, S, E};
 
 	    struct state
 	    {
@@ -38,6 +38,9 @@ namespace cs427_527
 		state();
 		// state constructor
 		state(std::pair<int, int> loc, std::vector<int> p, Direction d);
+
+		// state equality operator
+		bool operator==(const state& rhs) const;
 		
 		// Return vector of next possible states to move
 		state straight();
@@ -67,13 +70,14 @@ namespace cs427_527
 	    // Controls BDS
 	    bool findPaths();
 
-	    void toString();	  
+	    // Outputs answer in correct answer 
+	    std::vector<std::string> pathString();
 
 	private:
 	    // Queue holding possible paths
 	    std::queue<state> paths;
 	    // Vector of coord of path points
-	    std::vector<std::pair<int, int>> allPoints;
+	    std::vector<state> allPoints;
 	    // Counter to keep track of points vector
 	    int count;
 	    // Vector of grid
@@ -84,5 +88,5 @@ namespace cs427_527
 	    int cols;
     };
 }
-//#include "maze.cpp"
+#include "maze.cpp"
 #endif
