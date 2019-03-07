@@ -9,6 +9,7 @@
 using std::string;
 using std::vector;
 using std::make_pair;
+using std::pair;
 
 
 namespace cs427_527
@@ -17,11 +18,33 @@ namespace cs427_527
     {
 	rows = input.size(); 
 	cols = input[0].size();
+	count = 0;
 	
 	fillGrid(input);
-	toString();
+	//toString();
+    }
+ 
+    Maze::tile::tile(int x, int y, char r)
+    {
+	xy = make_pair(x, y);
+	rule = r;
     }
 
+    Maze::state::state(pair<int, int> loc, vector<int> p, Direction d)
+    {
+	space = loc;
+	parents = p;
+	direction = d;
+    }
+
+    vector<string> Maze::shortestPath()
+    {
+	startStates();
+	vector<string> temp;
+	temp.push_back("temp output");
+	return temp;
+    }
+    
     void Maze::fillGrid(vector<string> in)
     {
 	vector<Maze::tile> g;
@@ -39,11 +62,36 @@ namespace cs427_527
 
 	grid = g;
     }
-    
-    Maze::tile::tile(int x, int y, char r)
+
+    void Maze::addToQueue(pair<int, int> new_loc, vector<int> prev, Direction new_d)
     {
-	xy = make_pair(x, y);
-	rule = r;
+	vector<int> index = prev;
+	index.push_back(count);
+	allPoints.push_back(new_loc);
+	count++;
+	auto newState = Maze::state(new_loc, index, new_d);
+	paths.push(newState);	
+    }
+
+    void Maze::startStates()
+    {
+	vector<int> index;
+	for(int i=0; i < cols; i++)
+	{
+	    addToQueue(make_pair(-1, i), index, S);
+	}
+	for(int i=0; i < rows; i++)
+	{
+	    addToQueue(make_pair(i, -1), index, W); 
+	}
+	for(int i=0; i < cols; i++)
+	{
+	    addToQueue(make_pair(rows, i), index, N); 
+	}
+	for(int i=0; i < rows; i++)
+	{
+	    addToQueue(make_pair(cols, i), index, E); 
+	}
     }
 
     void Maze::toString()
