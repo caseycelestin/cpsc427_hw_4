@@ -4,6 +4,7 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <algorithm>
 
 //using Maze::tile;
 using std::string;
@@ -23,12 +24,16 @@ namespace cs427_527
 	fillGrid(input);
 	//toString();
     }
+
+    Maze::tile::tile(){}
  
     Maze::tile::tile(int x, int y, char r)
     {
 	xy = make_pair(x, y);
 	rule = r;
     }
+
+    Maze::state::state(){}
 
     Maze::state::state(pair<int, int> loc, vector<int> p, Direction d)
     {
@@ -40,9 +45,70 @@ namespace cs427_527
     vector<string> Maze::shortestPath()
     {
 	startStates();
+	findPaths();
+
 	vector<string> temp;
 	temp.push_back("temp output");
 	return temp;
+    }
+
+    bool Maze::findPaths()
+    {
+	Maze::state pop;
+	Maze::tile space;
+	Maze::state newState;
+	while(!(paths.empty()))
+	{
+	    pop = paths.front();
+	    
+	    if(pop.space.first < 0 || pop.space.first >= rows || pop.space.second < 0 || pop.space.second >= cols)
+	    {
+		newState = pop.straight();
+		if(!(newState.space.first < 0 || newState.space.first >= rows || newState.space.second < 0 || newState.space.second >= cols))
+		{
+		    addToQueue(newState);
+		}
+
+	    }
+	    else
+	    {
+		space = *find_if(grid.begin(), grid.end(), [&pop](Maze::tile t){return pop.space == t.xy;});
+		
+		switch(space.rule)
+		{
+		    case '*':
+			return true;
+		    case 'S':
+			newState = pop.straight();
+			addToQueue(newState);
+			break;
+		    case 'L':
+			newState = pop.left();
+			addToQueue(newState);
+			break;
+		    case 'R':
+			newState = pop.right();
+			addToQueue(newState);
+			break;
+		    case 'U':
+			newState = pop.uTurn();
+			addToQueue(newState);
+			break;
+		    case '?':
+			newState = pop.straight();
+			addToQueue(newState);
+			newState = pop.left();
+			addToQueue(newState);
+			newState = pop.right();
+			addToQueue(newState);
+			newState = pop.uTurn();
+			addToQueue(newState);
+			break;
+		}
+	    }
+	    paths.pop();    
+	}
+	return false;
     }
     
     void Maze::fillGrid(vector<string> in)
@@ -63,13 +129,11 @@ namespace cs427_527
 	grid = g;
     }
 
-    void Maze::addToQueue(pair<int, int> new_loc, vector<int> prev, Direction new_d)
+    void Maze::addToQueue(Maze::state newState)
     {
-	vector<int> index = prev;
-	index.push_back(count);
-	allPoints.push_back(new_loc);
+	newState.parents.push_back(count);
+	allPoints.push_back(newState.space);
 	count++;
-	auto newState = Maze::state(new_loc, index, new_d);
 	paths.push(newState);	
     }
 
@@ -78,20 +142,116 @@ namespace cs427_527
 	vector<int> index;
 	for(int i=0; i < cols; i++)
 	{
-	    addToQueue(make_pair(-1, i), index, S);
+	    addToQueue(Maze::state(make_pair(-1, i), index, S));
 	}
 	for(int i=0; i < rows; i++)
 	{
-	    addToQueue(make_pair(i, -1), index, W); 
+	    addToQueue(Maze::state(make_pair(i, -1), index, E)); 
 	}
 	for(int i=0; i < cols; i++)
 	{
-	    addToQueue(make_pair(rows, i), index, N); 
+	    addToQueue(Maze::state(make_pair(rows, i), index, N)); 
 	}
 	for(int i=0; i < rows; i++)
 	{
-	    addToQueue(make_pair(cols, i), index, E); 
+	    addToQueue(Maze::state(make_pair(i, cols), index, W)); 
 	}
+    }
+
+    Maze::state Maze::state::straight()
+    {
+	Maze::state newState = Maze::state(space, parents, direction);
+	switch(direction)
+	{
+	    case N:	
+		newState.space.first -= 1;
+		break;
+	    case W:
+		newState.space.second -= 1;
+		break;
+	    case S:
+		newState.space.first += 1;
+		break;
+	    case E:
+		newState.space.second += 1;
+		break;
+	}
+	return newState;
+    }
+
+    Maze::state Maze::state::left()
+    {
+	Maze::state newState = Maze::state(space, parents, direction);
+	switch(direction)
+	{
+	    case N:	
+		newState.space.second -= 1;
+		newState.direction = W;
+		break;
+	    case W:
+		newState.space.first += 1;
+		newState.direction = S;
+		break;
+	    case S:
+		newState.space.second += 1;
+		newState.direction = E;
+		break;
+	    case E:
+		newState.space.first -= 1;
+		newState.direction = N;
+		break;
+	}
+	return newState;
+    }
+
+    Maze::state Maze::state::right()
+    {
+	Maze::state newState = Maze::state(space, parents, direction);
+	switch(direction)
+	{
+	    case N:	
+		newState.space.second += 1;
+		newState.direction = E;
+		break;
+	    case W:
+		newState.space.first -= 1;
+		newState.direction = N;
+		break;
+	    case S:
+		newState.space.second -= 1;
+		newState.direction = W;
+		break;
+	    case E:
+		newState.space.first += 1;
+		newState.direction = S;
+		break;
+	}
+	return newState;
+    }
+
+    Maze::state Maze::state::uTurn()
+    {
+	Maze::state newState = Maze::state(space, parents, direction);
+	switch(direction)
+	{
+	    case N:	
+		newState.space.first += 1;
+		newState.direction = S;
+		break;
+	    case W:
+		newState.space.second += 1;
+		newState.direction = E;
+		break;
+	    case S:
+		newState.space.first -= 1;
+		newState.direction = N;
+		break;
+	    case E:
+		newState.space.second -= 1;
+		newState.direction = W;
+		break;
+	}
+	return newState;
     }
 
     void Maze::toString()

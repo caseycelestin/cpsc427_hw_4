@@ -19,6 +19,9 @@ namespace cs427_527
 	    
 	    struct tile
 	    {
+		//empty initilizer
+		tile();
+		// full initializer
 		tile(int x, int y, char r);     
 		// Data
 		// pair of ints, coordinates of tile
@@ -31,11 +34,16 @@ namespace cs427_527
 
 	    struct state
 	    {
+		// empty constructor
+		state();
 		// state constructor
 		state(std::pair<int, int> loc, std::vector<int> p, Direction d);
-
+		
 		// Return vector of next possible states to move
-		std::vector<state> nextStates();
+		state straight();
+		state left();
+		state right();
+		state uTurn();
 		
 		// Data
 		// coordinates of space
@@ -50,9 +58,14 @@ namespace cs427_527
 	    // Fill grid from input
 	    void fillGrid(std::vector<std::string>);
 
+	    // creates starting states and adds them to queue
 	    void startStates();
 
-	    void addToQueue(std::pair<int, int> new_loc, std::vector<int> prev, Direction new_d);
+	    // creates new state and adds to queue
+	    void addToQueue(state);
+	
+	    // Controls BDS
+	    bool findPaths();
 
 	    void toString();	  
 
